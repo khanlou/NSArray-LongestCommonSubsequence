@@ -14,21 +14,21 @@
     return [self indexesOfCommonElementsWithArray:array addedIndexes:nil removedIndexes:nil];
 }
 
-- (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array addedIndexes:(NSIndexSet**)addedIndexes removedIndexes:(NSIndexSet**)removedIndexes {
+- (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array addedIndexes:(NSArray**)addedIndexes removedIndexes:(NSArray**)removedIndexes {
     
-    NSInteger lengths[self.count][array.count];
+    NSInteger lengths[self.count+1][array.count+1];
     
 	for (NSInteger i = self.count; i >= 0; i--) {
 	    for (NSInteger j = array.count; j >= 0; j--) {
+            
             if (i == self.count || j == array.count) {
                 lengths[i][j] = 0;
-            }
-            else if ([self[i] isEqual:array[j]]) {
+            } else if ([self[i] isEqual:array[j]]) {
                  lengths[i][j] = 1 + lengths[i+1][j+1];
-            }
-            else {
+            } else {
                 lengths[i][j] = MAX(lengths[i+1][j], lengths[i][j+1]);
             }
+            
 	    }
     }
     
@@ -45,25 +45,24 @@
         }
     }
     
-    NSIndexSet *allIndexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.count)];
-    NSIndexSet *_removedIndexes = [allIndexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
-        return ![commonIndexes containsIndex:idx];
-    }];
+    NSMutableArray *_removedIndexes = [NSMutableArray array];
     
-    NSMutableIndexSet *_addedIndexes = [NSMutableIndexSet indexSet];
+    for (NSInteger i = 0; i < self.count; i++) {
+        if (![commonIndexes containsIndex:i]) {
+            [_removedIndexes addObject:@(i)];
+        }
+    }
+    
+    NSMutableArray *_addedIndexes = [NSMutableArray array];
     for (NSInteger i = 0, j = 0; i < self.count || j < array.count; ) {
         
         if (i < self.count && j < array.count && [self[i] isEqual:array[j]]) {
             i++; j++;
-        } else if ([_removedIndexes containsIndex:i]) {
+        } else if ([_removedIndexes containsObject:@(i)]) {
             i++;
         } else {
-            if (i == self.count && i == [_addedIndexes lastIndex]) {
-                [_addedIndexes addIndex:[_addedIndexes lastIndex]+1];
-            } else {
-                [_addedIndexes addIndex:i];
-                j++;
-            }
+            [_addedIndexes addObject:@(i-1)];
+            j++;
         }
     }
     
