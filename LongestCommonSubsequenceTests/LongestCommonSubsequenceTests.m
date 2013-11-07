@@ -20,12 +20,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"m", @"a", @"b", @"f"];
     
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second];
-    
-    XCTAssert(commonIndexes.count == 2, @"should match 2 items");
-    
-    NSArray *expectedResult =  @[@"a", @"b"];
-    XCTAssertEqualObjects(expectedResult, [first objectsAtIndexes:commonIndexes], @"indexes should map to the objects that we expect");
+    [self compareArray:first toArray:second expectingMatches:2];
 }
 
 - (void)testWithInitialObjectsMatching
@@ -33,12 +28,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"f"];
     
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second];
-    
-    XCTAssert(commonIndexes.count == 2, @"should match 2 items");
-    
-    NSArray *expectedResult =  @[@"a", @"b"];
-    XCTAssertEqualObjects(expectedResult, [first objectsAtIndexes:commonIndexes], @"indexes should map to the objects that we expect");
+    [self compareArray:first toArray:second expectingMatches:2];
 }
 
 - (void)testAllObjectsMatching
@@ -46,19 +36,32 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e"];
     
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second];
-    
-    XCTAssert(commonIndexes.count == 5, @"should match 5 items");
+    [self compareArray:first toArray:second expectingMatches:5];
 }
+
+- (void)testRemoveAll
+{
+    NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
+    NSArray *second = @[];
+    
+    [self compareArray:first toArray:second expectingMatches:0];
+}
+
+- (void)testAddAll
+{
+    NSArray *first = @[];
+    NSArray *second = @[@"a", @"b", @"c", @"d", @"e"];
+    
+    [self compareArray:first toArray:second expectingMatches:0];
+}
+
 
 - (void)testAllObjectsMatchingWithDifferentLengths
 {
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d"];
-    
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second];
-    
-    XCTAssert(commonIndexes.count == 4, @"should match 4 items");
+
+    [self compareArray:first toArray:second expectingMatches:4];
 }
 
 - (void) testCommutativeProperty
@@ -66,12 +69,8 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d"];
     
-    
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second];
-    NSIndexSet *commonIndexesReversed = [second indexesOfCommonElementsWithArray:first];
-    
-    XCTAssert(commonIndexes.count == 4, @"should match no items");
-    XCTAssert(commonIndexesReversed.count == 4, @"should match 4 items, should be commutative");
+    [self compareArray:first toArray:second expectingMatches:4];
+    [self compareArray:second toArray:first expectingMatches:4];
 }
 
 
@@ -80,12 +79,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e", @"f", @"g"];
     
-    NSArray *addedIndexes, *removedIndexes;
-    NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
-    
-    XCTAssert(commonIndexes.count == 5, @"should match 5 items");
-    XCTAssert(addedIndexes.count == 2, @"should match 2 items");
-    XCTAssert(removedIndexes.count == 0, @"should match 0 items");
+    [self compareArray:first toArray:second expectingMatches:5];
 }
 
 - (void)testFullMethod
@@ -116,6 +110,17 @@
     [firstMinusRemovedIndexes removeObjectsAtIndexes:indexesOfRemovedObjects];
     
     XCTAssertEqualObjects(commonObjects, firstMinusRemovedIndexes, @"the common objects should be the first array minus the objects at the removed indexes");
+}
+
+- (void) compareArray:(NSArray*)firstArray toArray:(NSArray*)secondArray expectingMatches:(NSInteger)matches {
+    NSArray *addedIndexes, *removedIndexes;
+    
+    NSIndexSet *commonIndexes = [firstArray indexesOfCommonElementsWithArray:secondArray addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
+    
+    XCTAssert(commonIndexes.count == matches, @"common index mismatch");
+    
+    
+    XCTAssertEqual(secondArray.count, firstArray.count + addedIndexes.count - removedIndexes.count, @"number of items in the new array should equal the first array's items + the added items - the deleted items");
 }
 
 @end
