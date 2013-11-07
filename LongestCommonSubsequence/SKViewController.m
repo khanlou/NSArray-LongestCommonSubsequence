@@ -45,10 +45,13 @@
                                                        delegate:self
                                               cancelButtonTitle:@"Cancel"
                                          destructiveButtonTitle:nil
-                                              otherButtonTitles:@"1 a b c d e",
+                                              otherButtonTitles:
+                            @"a b c d e",
+                            @"1 a b c d e",
                             @"a b c d e f",
                             @"a b c c.5 d e",
                             @"b c d e",
+                            @"b c d",
                             @"",
                             nil];
     
