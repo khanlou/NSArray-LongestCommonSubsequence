@@ -58,13 +58,21 @@
         } else if ([_removedIndexes containsIndex:i]) {
             i++;
         } else {
-            [_addedIndexes addIndex:i];
-            j++;
+            if (i == self.count && i == [_addedIndexes lastIndex]) {
+                [_addedIndexes addIndex:[_addedIndexes lastIndex]+1];
+            } else {
+                [_addedIndexes addIndex:i];
+                j++;
+            }
         }
     }
     
-    *removedIndexes = _removedIndexes;
-    *addedIndexes = _addedIndexes;
+    if (removedIndexes) {
+        *removedIndexes = _removedIndexes;
+    }
+    if (addedIndexes) {
+        *addedIndexes = _addedIndexes;
+    }
     return commonIndexes;
 
 }

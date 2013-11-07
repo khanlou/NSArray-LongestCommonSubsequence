@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A3F15BB182BD42B00C3D5AE /* LongCommonSubsequenceInTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3F15BA182BD42B00C3D5AE /* LongCommonSubsequenceInTableView.m */; };
 		1AC04D6F182A7D550079D681 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC04D6E182A7D550079D681 /* Foundation.framework */; };
 		1AC04D71182A7D550079D681 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC04D70182A7D550079D681 /* CoreGraphics.framework */; };
 		1AC04D73182A7D550079D681 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC04D72182A7D550079D681 /* UIKit.framework */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A3F15BA182BD42B00C3D5AE /* LongCommonSubsequenceInTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LongCommonSubsequenceInTableView.m; sourceTree = "<group>"; };
 		1AC04D6B182A7D550079D681 /* LongestCommonSubsequence.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LongestCommonSubsequence.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AC04D6E182A7D550079D681 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AC04D70182A7D550079D681 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -146,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				1AC04D9C182A7D550079D681 /* LongestCommonSubsequenceTests.m */,
+				1A3F15BA182BD42B00C3D5AE /* LongCommonSubsequenceInTableView.m */,
 				1AC04D97182A7D550079D681 /* Supporting Files */,
 			);
 			path = LongestCommonSubsequenceTests;
@@ -270,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AC04D9D182A7D550079D681 /* LongestCommonSubsequenceTests.m in Sources */,
+				1A3F15BB182BD42B00C3D5AE /* LongCommonSubsequenceInTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +484,7 @@
 				1AC04DA2182A7D550079D681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1AC04DA3182A7D550079D681 /* Build configuration list for PBXNativeTarget "LongestCommonSubsequenceTests" */ = {
 			isa = XCConfigurationList;
@@ -488,6 +493,7 @@
 				1AC04DA5182A7D550079D681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
