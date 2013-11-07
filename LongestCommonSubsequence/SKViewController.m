@@ -49,6 +49,7 @@
                             @"a b c d e",
                             @"1 a b c d e",
                             @"a b c d e f",
+                            @"a b c d e f g",
                             @"a b c c.5 d e",
                             @"b c d e",
                             @"b c d",
@@ -59,6 +60,9 @@
 }
 
 - (void) actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == actionSheet.cancelButtonIndex) {
+        return;
+    }
     NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
     NSArray *components = [title componentsSeparatedByString:@" "];
     [self switchToNewDataSource:components];
@@ -69,6 +73,7 @@
     
     [_sourceData indexesOfCommonElementsWithArray:newSource addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     
+    NSArray *oldSource = _sourceData;
     self.sourceData = [newSource mutableCopy];
     
     NSMutableArray *indexPathsToAdd = [NSMutableArray array], *indexPathsToDelete = [NSMutableArray array];
