@@ -61,7 +61,11 @@
         } else if ([_removedIndexes containsObject:@(i)]) {
             i++;
         } else {
-            [_addedIndexes addObject:@(i-1)];
+            if ([_addedIndexes containsObject:@(i)]) {
+                [_addedIndexes addObject:@(i+1)];
+            } else {
+                [_addedIndexes addObject:@(i)];
+            }
             j++;
         }
     }
