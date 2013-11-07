@@ -12,7 +12,7 @@
 
 @interface LongCommonSubsequenceInTableView : XCTestCase <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) NSMutableArray *sourceData;
+@property (nonatomic, strong) NSArray *sourceData;
 @property (nonatomic, strong) UITableView *tableView;
 
 @end
@@ -23,15 +23,12 @@
 {
     [super setUp];
     
-    self.sourceData = [@[@"a", @"b", @"c", @"d", @"e"] mutableCopy];
 
     self.tableView = [[UITableView alloc] init];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     
-    [_tableView reloadData];
-    
-    NSLog(@"done");
+    [self resetTableView];
 }
 
 - (void)tearDown
@@ -40,37 +37,98 @@
     [super tearDown];
 }
 
-- (void)testChangingDataSourcesDynamically
-{
-    NSMutableArray *newSourceData = [@[@"a", @"b", @"d", @"e", @"f"] mutableCopy];
-    
-    NSIndexSet *addedIndexes, *removedIndexes;
-    
-    NSIndexSet *commonIndexes = [_sourceData indexesOfCommonElementsWithArray:newSourceData addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
-    
-    XCTAssert(commonIndexes.count, @"has some common items");
+- (void) resetTableView {
+    self.sourceData = @[@"a", @"b", @"c", @"d", @"e"];
+    [_tableView reloadData];
+}
 
-    self.sourceData = newSourceData;
+- (void)testRemovingOneItem
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"b", @"d", @"e"]];
+}
+
+- (void)testRemovingFirstItem
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"b", @"c", @"d", @"e"]];
+}
+
+- (void)testRemovingTwoItems
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"b", @"d"]];
+    
+}
+
+- (void) testRemovingAllItems
+{
+    [self resetTableView];
+    [self switchToNewDataSource:@[]];
+}
+
+- (void)testAddingOneItem
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"b", @"c", @"d", @"e", @"f"]];
+    
+}
+
+- (void)testAddingFirstItem
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"1", @"a", @"b", @"c", @"d", @"e"]];
+    
+}
+
+- (void)testAddingTwoItems
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"b", @"c", @"d", @"e", @"f", @"g"]];
+    
+}
+
+- (void)testSwitchingOneItem
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"b", @"c", @"d", @"f"]];
+    
+}
+
+
+
+- (void) switchToNewDataSource:(NSArray*)newSource {
+    NSArray *addedIndexes, *removedIndexes;
+    
+    [_sourceData indexesOfCommonElementsWithArray:newSource addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
+    
+    self.sourceData = newSource;
     
     NSMutableArray *indexPathsToAdd = [NSMutableArray array], *indexPathsToDelete = [NSMutableArray array];
     
-    [addedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPathsToAdd addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    [addedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
+        [indexPathsToAdd addObject:[NSIndexPath indexPathForRow:[index integerValue] inSection:0]];
     }];
-    [removedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    [removedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
+        [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[index integerValue] inSection:0]];
     }];
     
-    NSLog(@"delete: %@", indexPathsToDelete);
-    NSLog(@"add: %@", indexPathsToAdd);
+    NSLog(@"\n\n\n\n\n\n\n\n\n\n");
+    
+    NSLog(@"added %@", addedIndexes);
+    NSLog(@"deleted %@", removedIndexes);
     
     [_tableView beginUpdates];
-    [_tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
     [_tableView insertRowsAtIndexPaths:indexPathsToAdd withRowAnimation:UITableViewRowAnimationAutomatic];
+    [_tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
     [_tableView endUpdates];
-    
-    
-    
 }
 
 
