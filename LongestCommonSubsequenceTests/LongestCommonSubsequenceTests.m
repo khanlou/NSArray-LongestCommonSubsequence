@@ -15,7 +15,7 @@
 
 @implementation LongestCommonSubsequenceTests
 
-- (void)testConvenienceMethod
+- (void)testSimpleCase
 {
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"m", @"a", @"b", @"f"];
@@ -80,7 +80,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e", @"f", @"g"];
     
-    NSIndexSet *addedIndexes, *removedIndexes;
+    NSArray *addedIndexes, *removedIndexes;
     NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     
     XCTAssert(commonIndexes.count == 5, @"should match 5 items");
@@ -93,7 +93,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"m", @"a", @"b", @"f"];
     
-    NSIndexSet *addedIndexes, *removedIndexes;
+    NSArray *addedIndexes, *removedIndexes;
     
     NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     
@@ -106,8 +106,14 @@
     
     NSArray *commonObjects = [first objectsAtIndexes:commonIndexes];
     
+    
+    NSMutableIndexSet *indexesOfRemovedObjects = [NSMutableIndexSet indexSet];
+    [removedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
+        [indexesOfRemovedObjects addIndex:[index integerValue]];
+    }];
+    
     NSMutableArray *firstMinusRemovedIndexes = [first mutableCopy];
-    [firstMinusRemovedIndexes removeObjectsAtIndexes:removedIndexes];
+    [firstMinusRemovedIndexes removeObjectsAtIndexes:indexesOfRemovedObjects];
     
     XCTAssertEqualObjects(commonObjects, firstMinusRemovedIndexes, @"the common objects should be the first array minus the objects at the removed indexes");
 }
