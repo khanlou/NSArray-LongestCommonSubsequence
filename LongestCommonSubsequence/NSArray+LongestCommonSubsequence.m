@@ -53,13 +53,14 @@
         }
     }
     
+    
+    NSArray *commonObjects = [self objectsAtIndexes:commonIndexes];
+    
     NSMutableArray *_addedIndexes = [NSMutableArray array];
-    for (NSInteger i = 0, j = 0; i < self.count || j < array.count; ) {
-        
-        if (i < self.count && j < array.count && [self[i] isEqual:array[j]]) {
-            i++; j++;
-        } else if ([_removedIndexes containsObject:@(i)]) {
+    for (NSInteger i = 0, j = 0; i < commonObjects.count || j < array.count; ) {
+        if (i < commonObjects.count && j < array.count && [commonObjects[i] isEqual:array[j]]) {
             i++;
+            j++;
         } else {
             if ([_addedIndexes containsObject:@(i)]) {
                 [_addedIndexes addObject:@(i+1)];
