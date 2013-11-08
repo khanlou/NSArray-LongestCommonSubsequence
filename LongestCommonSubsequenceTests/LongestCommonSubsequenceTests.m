@@ -87,7 +87,7 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"m", @"a", @"b", @"f"];
     
-    NSArray *addedIndexes, *removedIndexes;
+    NSIndexSet *addedIndexes, *removedIndexes;
     
     NSIndexSet *commonIndexes = [first indexesOfCommonElementsWithArray:second addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     
@@ -101,19 +101,15 @@
     NSArray *commonObjects = [first objectsAtIndexes:commonIndexes];
     
     
-    NSMutableIndexSet *indexesOfRemovedObjects = [NSMutableIndexSet indexSet];
-    [removedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
-        [indexesOfRemovedObjects addIndex:[index integerValue]];
-    }];
     
     NSMutableArray *firstMinusRemovedIndexes = [first mutableCopy];
-    [firstMinusRemovedIndexes removeObjectsAtIndexes:indexesOfRemovedObjects];
+    [firstMinusRemovedIndexes removeObjectsAtIndexes:removedIndexes];
     
     XCTAssertEqualObjects(commonObjects, firstMinusRemovedIndexes, @"the common objects should be the first array minus the objects at the removed indexes");
 }
 
 - (void) compareArray:(NSArray*)firstArray toArray:(NSArray*)secondArray expectingMatches:(NSInteger)matches {
-    NSArray *addedIndexes, *removedIndexes;
+    NSIndexSet *addedIndexes, *removedIndexes;
     
     NSIndexSet *commonIndexes = [firstArray indexesOfCommonElementsWithArray:secondArray addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     

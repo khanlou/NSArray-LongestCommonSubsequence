@@ -69,20 +69,20 @@
 }
 
 - (void) switchToNewDataSource:(NSArray*)newSource {
-    NSArray *addedIndexes, *removedIndexes;
+    NSIndexSet *addedIndexes, *removedIndexes;
     
     [_sourceData indexesOfCommonElementsWithArray:newSource addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
     
-    NSArray *oldSource = _sourceData;
     self.sourceData = [newSource mutableCopy];
     
     NSMutableArray *indexPathsToAdd = [NSMutableArray array], *indexPathsToDelete = [NSMutableArray array];
     
-    [addedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
-        [indexPathsToAdd addObject:[NSIndexPath indexPathForRow:[index integerValue] inSection:0]];
+    
+    [addedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPathsToAdd addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
     }];
-    [removedIndexes enumerateObjectsUsingBlock:^(NSNumber *index, NSUInteger idx, BOOL *stop) {
-        [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[index integerValue] inSection:0]];
+    [removedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
     }];
     
     [_tableView beginUpdates];
