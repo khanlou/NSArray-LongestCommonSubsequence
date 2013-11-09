@@ -10,8 +10,8 @@
 
 @interface NSArray (LongestCommonSubsequence)
 
-- (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array addedIndexes:(NSIndexSet**)addedIndexes removedIndexes:(NSIndexSet**)removedIndexes;
 - (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array;
+- (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array addedIndexes:(NSIndexSet**)addedIndexes removedIndexes:(NSIndexSet**)removedIndexes;
 
 
 @end
