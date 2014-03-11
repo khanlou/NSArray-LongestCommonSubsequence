@@ -53,9 +53,3 @@ The key to finding the right indexes for adding was (as always) [in the Apple do
 >  [`UITableView`] defers any insertions of rows or sections until after it has handled the deletions of rows or sections.
 
 This means the deleted objects have to be found first. Once they've been removed, we have only the common objects left. We can then compare the new array to the list of common objects, and find the indexes that the new tableview rows will need to be added at.
-
-One caveat is that `UITableView` doesn't like when you try to add two `insert` animations for the same row, so we increment by one if that index is already in the `addedIndexes` set.
-
-### Caveat: `UITableView` has bugs
-
-One other thing you will find is that the insertion and deletion animations in UITableView are not perfect. Sometimes you'll insert or delete, and see two cells that are displaying the same data, and one element that you're expecting will be missing. Clearly, this is a complicated bit of API, and so it will have bugs in it. I'm going to file a Radar about this with this project, which will hopefully give the Apple engineers what they need to fix the bugs. 
