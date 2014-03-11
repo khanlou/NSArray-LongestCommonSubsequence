@@ -65,11 +65,7 @@
                 i++;
                 j++;
             } else {
-                NSInteger currentIndex = i;
-                while ([_addedIndexes containsIndex:currentIndex]) {
-                    currentIndex++;
-                }
-                [_addedIndexes addIndex:currentIndex];
+                [_addedIndexes addIndex:j];
                 j++;
             }
         }

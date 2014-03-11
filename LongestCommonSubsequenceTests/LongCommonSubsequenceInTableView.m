@@ -24,10 +24,11 @@
     [super setUp];
     
 
-    self.tableView = [[UITableView alloc] init];
+    self.tableView = [[UITableView alloc] initWithFrame:UIApplication.sharedApplication.keyWindow.bounds];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     
+    [UIApplication.sharedApplication.keyWindow addSubview:_tableView];
     [self resetTableView];
 }
 
@@ -40,6 +41,7 @@
 - (void) resetTableView {
     self.sourceData = @[@"a", @"b", @"c", @"d", @"e"];
     [_tableView reloadData];
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1f]];
 }
 
 - (void)testRemovingOneItem
@@ -94,6 +96,21 @@
     
 }
 
+- (void)testAddingTwoNonAdjacentItems
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"a", @"a.1", @"b", @"c", @"c.2", @"d", @"e", @"e.3"]];
+}
+
+- (void)testReordering
+{
+    [self resetTableView];
+    
+    [self switchToNewDataSource:@[@"b", @"e", @"d", @"c", @"a"]];
+}
+
+
 - (void)testSwitchingOneItem
 {
     [self resetTableView];
@@ -121,11 +138,23 @@
     }];
     
     [_tableView beginUpdates];
-    [_tableView insertRowsAtIndexPaths:indexPathsToAdd withRowAnimation:UITableViewRowAnimationAutomatic];
-    [_tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
+    [_tableView insertRowsAtIndexPaths:indexPathsToAdd withRowAnimation:UITableViewRowAnimationNone];
+    [_tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationNone];
     [_tableView endUpdates];
+    
+    [self verifyCells];
 }
 
+- (void) verifyCells
+{
+    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1f]];
+    
+    XCTAssert([_tableView numberOfRowsInSection:0] == self.sourceData.count, @"number of rows in table view should equal source data count");
+    for (NSUInteger i = 0; i < self.sourceData.count; i++) {
+        NSString* cellLabel = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]].textLabel.text;
+        XCTAssert([cellLabel isEqualToString:self.sourceData[i]], @"result cells should equal expected");
+    }
+}
 
 #pragma mark - UITableViewDataSource
 
