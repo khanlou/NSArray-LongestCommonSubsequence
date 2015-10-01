@@ -95,6 +95,7 @@
 				1AC04D6C182A7D550079D681 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		1AC04D6C182A7D550079D681 /* Products */ = {
 			isa = PBXGroup;

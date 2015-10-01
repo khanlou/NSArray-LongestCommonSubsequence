@@ -96,6 +96,23 @@
     NSArray *expectedResult =  @[@"a", @"b"];
     XCTAssertEqualObjects(expectedResult, [first objectsAtIndexes:commonIndexes], @"indexes should map to the objects that we expect");
     
+    // removed indexes ∪ common indexes = all first indexes
+    NSIndexSet *allFirstIndexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 5)];
+    NSMutableIndexSet *removedPlusCommon = [removedIndexes mutableCopy];
+    [removedPlusCommon addIndexes:commonIndexes];
+    XCTAssertEqualObjects(allFirstIndexes, removedPlusCommon);
+    
+    // added indexes = (0, 3)
+    NSMutableIndexSet *expectedAddedIndexes = [NSMutableIndexSet indexSet];
+    [expectedAddedIndexes addIndex:0];
+    [expectedAddedIndexes addIndex:3];
+    XCTAssertEqualObjects(addedIndexes, expectedAddedIndexes);
+    
+    // removed indexes = (2-4)
+    NSMutableIndexSet *expectedRemovedIndexes = [NSMutableIndexSet indexSet];
+    [expectedRemovedIndexes addIndexesInRange:NSMakeRange(2, 3)];
+    XCTAssertEqualObjects(removedIndexes, expectedRemovedIndexes);
+    
     XCTAssertEqual(second.count, first.count + addedIndexes.count - removedIndexes.count, @"number of items in the new array should equal the first array's items + the added items - the deleted items");
     
     NSArray *commonObjects = [first objectsAtIndexes:commonIndexes];
@@ -106,6 +123,13 @@
     [firstMinusRemovedIndexes removeObjectsAtIndexes:removedIndexes];
     
     XCTAssertEqualObjects(commonObjects, firstMinusRemovedIndexes, @"the common objects should be the first array minus the objects at the removed indexes");
+    
+    // first - removed + added = second
+    NSMutableArray *firstMinusRemovedPlusAdded = [first mutableCopy];
+    [firstMinusRemovedPlusAdded removeObjectsAtIndexes:removedIndexes];
+    NSArray *addedObjects = [second objectsAtIndexes:addedIndexes];
+    [firstMinusRemovedPlusAdded insertObjects:addedObjects atIndexes:addedIndexes];
+    XCTAssertEqualObjects(firstMinusRemovedPlusAdded, second);
 }
 
 - (void) compareArray:(NSArray*)firstArray toArray:(NSArray*)secondArray expectingMatches:(NSInteger)matches {
