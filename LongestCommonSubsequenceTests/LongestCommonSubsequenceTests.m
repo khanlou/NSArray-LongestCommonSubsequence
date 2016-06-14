@@ -9,6 +9,25 @@
 #import <XCTest/XCTest.h>
 #import "NSArray+LongestCommonSubsequence.h"
 
+#define LCSTestCompareCount(firstArray, secondArray, commonCount) ({\
+    NSIndexSet *addedIndexes, *removedIndexes;\
+    NSIndexSet *commonIndexes = [firstArray indexesOfCommonElementsWithArray:secondArray addedIndexes:&addedIndexes removedIndexes:&removedIndexes];\
+    \
+    XCTAssertEqual((int)commonIndexes.count, (int)commonCount, @"number of common items mismatch");\
+    XCTAssertEqual(secondArray.count, firstArray.count + addedIndexes.count - removedIndexes.count, @"number of items in the new array should equal the first array's items + the added items - the deleted items");\
+})
+
+#define LCSTestReplicable(firstArray, secondArray) ({\
+    NSIndexSet *addedIndexes, *removedIndexes;\
+    [firstArray indexesOfCommonElementsWithArray:secondArray addedIndexes:&addedIndexes removedIndexes:&removedIndexes];\
+    NSMutableArray *replica = [firstArray mutableCopy];\
+    [replica removeObjectsAtIndexes:removedIndexes];\
+    NSArray *addedObjects = [secondArray objectsAtIndexes:addedIndexes];\
+    [replica insertObjects:addedObjects atIndexes:addedIndexes];\
+    XCTAssert([secondArray isEqualToArray:replica], @"Expecting to be able to replicate the second array using the first - removed + added items");\
+})
+
+
 @interface LongestCommonSubsequenceTests : XCTestCase
 
 @end
@@ -20,7 +39,8 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"m", @"a", @"b", @"f"];
     
-    [self compareArray:first toArray:second expectingMatches:2];
+    LCSTestCompareCount(first, second, 2);
+    LCSTestReplicable(first, second);
 }
 
 - (void)testWithInitialObjectsMatching
@@ -28,7 +48,8 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"f"];
     
-    [self compareArray:first toArray:second expectingMatches:2];
+    LCSTestCompareCount(first, second, 2);
+    LCSTestReplicable(first, second);
 }
 
 - (void)testAllObjectsMatching
@@ -36,7 +57,8 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e"];
     
-    [self compareArray:first toArray:second expectingMatches:5];
+    LCSTestCompareCount(first, second, 5);
+    LCSTestReplicable(first, second);
 }
 
 - (void)testRemoveAll
@@ -44,7 +66,8 @@
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[];
     
-    [self compareArray:first toArray:second expectingMatches:0];
+    LCSTestCompareCount(first, second, 0);
+    LCSTestReplicable(first, second);
 }
 
 - (void)testAddAll
@@ -52,34 +75,92 @@
     NSArray *first = @[];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e"];
     
-    [self compareArray:first toArray:second expectingMatches:0];
+    LCSTestCompareCount(first, second, 0);
+    LCSTestReplicable(first, second);
 }
-
 
 - (void)testAllObjectsMatchingWithDifferentLengths
 {
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d"];
-
-    [self compareArray:first toArray:second expectingMatches:4];
+    
+    LCSTestCompareCount(first, second, 4);
+    LCSTestReplicable(first, second);
 }
 
-- (void) testCommutativeProperty
+- (void)testCommutativeProperty
 {
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d"];
     
-    [self compareArray:first toArray:second expectingMatches:4];
-    [self compareArray:second toArray:first expectingMatches:4];
+    LCSTestCompareCount(first, second, 4);
+    LCSTestCompareCount(second, first, 4);
+    
+    LCSTestReplicable(first, second);
+    LCSTestReplicable(second, first);
 }
-
 
 - (void)testObjectsAtEnd
 {
     NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
     NSArray *second = @[@"a", @"b", @"c", @"d", @"e", @"f", @"g"];
     
-    [self compareArray:first toArray:second expectingMatches:5];
+    LCSTestCompareCount(first, second, 5);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testOnlyEqual
+{
+    NSArray *first = @[@"a", @"a", @"a", @"a", @"a"];
+    NSArray *second = @[@"a", @"a", @"a", @"a", @"a"];
+    
+    LCSTestCompareCount(first, second, 5);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testManyEqual
+{
+    NSArray *first = @[@"a", @"a", @"a", @"a", @"a"];
+    NSArray *second = @[@"a", @"a", @"b", @"a", @"a"];
+    
+    LCSTestCompareCount(first, second, 4);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testOddCountReversed
+{
+    NSArray *first = @[@"a", @"b", @"c", @"d", @"e"];
+    NSArray *second = @[@"e", @"d", @"c", @"b", @"a"];
+    
+    LCSTestCompareCount(first, second, 1);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testEvenCountReversed
+{
+    NSArray *first = @[@"a", @"b", @"d", @"e"];
+    NSArray *second = @[@"e", @"d", @"b", @"a"];
+    
+    LCSTestCompareCount(first, second, 1);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testPseudoPairs
+{
+    NSArray *first = @[@"a", @"a", @"b", @"b", @"c"];
+    NSArray *second = @[@"a", @"a", @"b", @"b", @"c"];
+    
+    LCSTestCompareCount(first, second, 5);
+    LCSTestReplicable(first, second);
+}
+
+- (void)testPseudoPairsFlipped
+{
+    NSArray *first = @[@"a", @"a", @"b", @"b", @"c"];
+    NSArray *second = @[@"c", @"b", @"b", @"a", @"a"];
+    
+    LCSTestCompareCount(first, second, 2);
+    LCSTestReplicable(first, second);
 }
 
 - (void)testFullMethod
@@ -130,17 +211,6 @@
     NSArray *addedObjects = [second objectsAtIndexes:addedIndexes];
     [firstMinusRemovedPlusAdded insertObjects:addedObjects atIndexes:addedIndexes];
     XCTAssertEqualObjects(firstMinusRemovedPlusAdded, second);
-}
-
-- (void) compareArray:(NSArray*)firstArray toArray:(NSArray*)secondArray expectingMatches:(NSInteger)matches {
-    NSIndexSet *addedIndexes, *removedIndexes;
-    
-    NSIndexSet *commonIndexes = [firstArray indexesOfCommonElementsWithArray:secondArray addedIndexes:&addedIndexes removedIndexes:&removedIndexes];
-    
-    XCTAssert(commonIndexes.count == matches, @"common index mismatch");
-    
-    
-    XCTAssertEqual(secondArray.count, firstArray.count + addedIndexes.count - removedIndexes.count, @"number of items in the new array should equal the first array's items + the added items - the deleted items");
 }
 
 @end
