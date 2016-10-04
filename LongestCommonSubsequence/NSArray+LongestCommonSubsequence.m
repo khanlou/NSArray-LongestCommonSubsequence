@@ -15,9 +15,17 @@
 }
 
 - (NSIndexSet*) indexesOfCommonElementsWithArray:(NSArray*)array addedIndexes:(NSIndexSet**)addedIndexes removedIndexes:(NSIndexSet**)removedIndexes {
-    
-    NSInteger lengths[self.count+1][array.count+1];
-    
+
+    const NSInteger firstDimension = self.count + 1;
+
+    NSInteger **lengths = calloc(firstDimension, sizeof(NSInteger*));
+
+    const NSInteger secondDimension = array.count + 1;
+
+    for(NSInteger i = 0; i < firstDimension; i++) {
+      lengths[i] = calloc(secondDimension, sizeof(NSInteger));
+    }
+
     for (NSInteger i = self.count; i >= 0; i--) {
         for (NSInteger j = array.count; j >= 0; j--) {
             
@@ -43,7 +51,13 @@
             j++;
         }
     }
-    
+
+    for(NSInteger i = 0; i < firstDimension; i++) {
+      free(lengths[i]);
+    }
+
+    free(lengths);
+
     if (removedIndexes) {
         NSMutableIndexSet *_removedIndexes = [NSMutableIndexSet indexSet];
         
